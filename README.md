@@ -1,18 +1,27 @@
+  <p align="center">
+    <img width="500" height="500" alt="Askimo" 
+  src="https://github.com/user-attachments/assets/8bcd011c-5336-4a6f-9433-0af00669203f" />
+  </p>
+
 # Askimo
 
-A CLI tool for communicating with AI providers (Perplexity, OpenAI, Anthropic).
+A CLI tool for communicating with AI providers.
 
-## Installation
+**Supported providers:** Perplexity · OpenAI · Anthropic
+
+---
+
+## 📦 Installation
 
 ```bash
 npm install -g askimo
 ```
 
-## Configuration
+## ⚙️ Configuration
 
 Create a config file at `~/.askimo/config`:
 
-```
+```bash
 # API Keys (at least one required)
 PERPLEXITY_API_KEY=your-perplexity-key
 OPENAI_API_KEY=your-openai-key
@@ -25,33 +34,34 @@ OPENAI_MODEL=gpt-4o
 ANTHROPIC_MODEL=claude-sonnet-4-20250514
 ```
 
-## Usage
+---
 
-### Ask a single question
+## 🚀 Usage
+
+### Quick question
 
 ```bash
 askimo "What is the capital of France?"
 ```
 
-The `ask` command is the default, so you can omit it:
+### Choose a provider
+
+| Flag | Provider |
+|------|----------|
+| `-p` | Perplexity (default) |
+| `-o` | OpenAI |
+| `-a` | Anthropic |
 
 ```bash
-askimo ask "What is the capital of France?"
-```
-
-### Provider flags
-
-```bash
-askimo "question" -p    # Use Perplexity (default)
-askimo "question" -o    # Use OpenAI
-askimo "question" -a    # Use Anthropic
+askimo "explain quantum computing" -o    # Use OpenAI
+askimo "write a haiku" -a                # Use Anthropic
 ```
 
 ### Continue a conversation
 
 ```bash
-askimo "follow up question" -c 1    # Continue last conversation
-askimo "follow up question" -c 2    # Continue second-to-last
+askimo "tell me more" -c 1     # Continue last conversation
+askimo "go deeper" -c 2        # Continue second-to-last
 ```
 
 ### JSON output
@@ -60,36 +70,37 @@ askimo "follow up question" -c 2    # Continue second-to-last
 askimo "question" --json
 ```
 
-Returns structured JSON with provider, model, question, response, and sources (for Perplexity).
-
 ### Interactive chat
 
 ```bash
-askimo chat
-askimo chat -o              # Chat with OpenAI
-askimo chat -c 1            # Continue last conversation
+askimo chat                # Start new chat
+askimo chat -o             # Chat with OpenAI
+askimo chat -c 1           # Continue last conversation
 ```
 
-Type `exit` or press `Ctrl+C` to quit.
+Type `exit` or `Ctrl+C` to quit.
 
-### List available models
+### List models
 
 ```bash
-askimo models               # List all providers
-askimo models -p            # Perplexity only
-askimo models -o            # OpenAI only
-askimo models -a            # Anthropic only
+askimo models              # All providers
+askimo models -p           # Perplexity only
 ```
 
-## Features
+---
 
-- Streaming responses
-- Conversation history (saved to `~/.askimo/conversations/`)
-- Source citations (Perplexity)
-- Multiple AI providers
-- Configurable default models
+## ✨ Features
 
-## Development
+| Feature | Description |
+|---------|-------------|
+| Streaming | Real-time response output |
+| Citations | Source links with Perplexity |
+| History | Conversations saved to `~/.askimo/conversations/` |
+| Multi-provider | Switch between AI providers easily |
+
+---
+
+## 🛠️ Development
 
 ```bash
 npm install
@@ -97,6 +108,8 @@ npm test
 npm run lint
 ```
 
-## License
+---
+
+## 📄 License
 
 Apache-2.0
