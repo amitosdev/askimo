@@ -1,6 +1,6 @@
   <p align="center">
-    <img width="500" height="500" alt="Askimo" 
-  src="https://github.com/user-attachments/assets/8bcd011c-5336-4a6f-9433-0af00669203f" />
+    <img width="400" height="400" alt="Askimo" 
+  src="https://github.com/user-attachments/assets/cbf2ab5d-5a07-45a2-9109-6a7bc22ea878" />
   </p>
 
 # Askimo
