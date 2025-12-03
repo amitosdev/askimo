@@ -5,7 +5,7 @@ A CLI tool for communicating with AI providers (Perplexity, OpenAI, Anthropic).
 ## Installation
 
 ```bash
-npm install -g .
+npm install -g askimo
 ```
 
 ## Configuration
