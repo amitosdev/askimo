@@ -1,6 +1,6 @@
 {
   "name": "askimo",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A CLI tool for communicating with AI providers (Perplexity, OpenAI, Anthropic)",
   "license": "Apache-2.0",
   "author": "Amit Tal",
