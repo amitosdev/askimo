@@ -45,6 +45,17 @@ test('buildJsonOutput extracts question from last user message', (t) => {
   t.is(output.question, 'Second question')
 })
 
+test('buildJsonOutput finds user message even when assistant message is last', (t) => {
+  const conversation = createMockConversation({
+    messages: [
+      { role: 'user', content: 'My question' },
+      { role: 'assistant', content: 'My answer' }
+    ]
+  })
+  const output = buildJsonOutput(conversation, 'response')
+  t.is(output.question, 'My question')
+})
+
 test('buildJsonOutput returns empty question when no messages', (t) => {
   const conversation = createMockConversation({ messages: [] })
   const output = buildJsonOutput(conversation, 'response')

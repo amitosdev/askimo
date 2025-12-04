@@ -70,6 +70,20 @@ askimo "go deeper" -c 2        # Continue second-to-last
 askimo "question" --json
 ```
 
+### Pipe content
+
+```bash
+cat code.js | askimo "explain this code"
+echo "hello world" | askimo "translate to French"
+```
+
+### Read from file
+
+```bash
+askimo -f code.js "what does this do"
+askimo -f error.log "find the bug"
+```
+
 ### Interactive chat
 
 ```bash
@@ -94,6 +108,8 @@ askimo models -p           # Perplexity only
 | Feature | Description |
 |---------|-------------|
 | Streaming | Real-time response output |
+| Piping | Pipe content via stdin |
+| File input | Read content from files with `-f` |
 | Citations | Source links with Perplexity |
 | History | Conversations saved to `~/.askimo/conversations/` |
 | Multi-provider | Switch between AI providers easily |

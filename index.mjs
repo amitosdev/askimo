@@ -4,6 +4,7 @@ import { Command } from 'commander'
 import { startChat } from './lib/chat.mjs'
 import { ensureDirectories, loadConfig } from './lib/config.mjs'
 import { createConversation, loadConversation, saveConversation } from './lib/conversation.mjs'
+import { buildMessage, readFile, readStdin } from './lib/input.mjs'
 import { DEFAULT_MODELS, determineProvider, getProvider, listModels } from './lib/providers.mjs'
 import { generateResponse, outputJson, streamResponse } from './lib/stream.mjs'
 import pkg from './package.json' with { type: 'json' }
@@ -15,14 +16,31 @@ program.name('askimo').description('CLI tool for communicating with AI providers
 program
   .command('ask', { isDefault: true })
   .description('Ask a single question')
-  .argument('<question>', 'The question to ask')
+  .argument('[question]', 'The question to ask (can also pipe content via stdin)')
   .option('-p, --perplexity', 'Use Perplexity AI (default)')
   .option('-o, --openai', 'Use OpenAI')
   .option('-a, --anthropic', 'Use Anthropic Claude')
   .option('-j, --json', 'Output as JSON instead of streaming')
   .option('-c, --continue <n>', 'Continue conversation N (1=last, 2=second-to-last)', Number.parseInt)
+  .option('-f, --file <path>', 'Read content from file')
   .action(async (question, options) => {
     try {
+      const stdinContent = await readStdin()
+      const fileContent = options.file ? await readFile(options.file) : null
+
+      if (stdinContent && options.file) {
+        console.error('Error: Cannot use both piped input and --file flag')
+        process.exit(1)
+      }
+
+      const content = stdinContent || fileContent
+      const message = buildMessage(question, content)
+
+      if (!message) {
+        console.error('Error: No question provided. Use: askimo "question" or pipe content')
+        process.exit(1)
+      }
+
       const config = await loadConfig()
       await ensureDirectories()
 
@@ -46,7 +64,7 @@ program
 
       conversation.messages.push({
         role: 'user',
-        content: question
+        content: message
       })
 
       let responseText
