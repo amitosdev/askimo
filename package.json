@@ -4,6 +4,18 @@
   "description": "A CLI tool for communicating with AI providers (Perplexity, OpenAI, Anthropic)",
   "license": "Apache-2.0",
   "author": "Amit Tal",
+  "keywords": [
+    "cli",
+    "ai",
+    "llm",
+    "perplexity",
+    "openai",
+    "anthropic",
+    "claude",
+    "gpt",
+    "chatbot",
+    "terminal"
+  ],
   "type": "module",
   "bin": {
     "askimo": "./index.mjs"
