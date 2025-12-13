@@ -20,6 +20,7 @@ program
   .option('-p, --perplexity', 'Use Perplexity AI (default)')
   .option('-o, --openai', 'Use OpenAI')
   .option('-a, --anthropic', 'Use Anthropic Claude')
+  .option('-x, --xai', 'Use xAI Grok')
   .option('-j, --json', 'Output as JSON instead of streaming')
   .option('-c, --continue <n>', 'Continue conversation N (1=last, 2=second-to-last)', Number.parseInt)
   .option('-f, --file <path>', 'Read content from file')
@@ -98,6 +99,7 @@ program
   .option('-p, --perplexity', 'Use Perplexity AI (default)')
   .option('-o, --openai', 'Use OpenAI')
   .option('-a, --anthropic', 'Use Anthropic Claude')
+  .option('-x, --xai', 'Use xAI Grok')
   .option('-c, --continue <n>', 'Continue conversation N (1=last, 2=second-to-last)', Number.parseInt)
   .action(async (options) => {
     try {
@@ -120,6 +122,7 @@ program
   .option('-p, --perplexity', 'Show only Perplexity models')
   .option('-o, --openai', 'Show only OpenAI models')
   .option('-a, --anthropic', 'Show only Anthropic models')
+  .option('-x, --xai', 'Show only xAI models')
   .action(async (options) => {
     try {
       const config = await loadConfig()
@@ -128,8 +131,9 @@ program
       if (options.perplexity) providers.push('perplexity')
       if (options.openai) providers.push('openai')
       if (options.anthropic) providers.push('anthropic')
+      if (options.xai) providers.push('xai')
 
-      const toShow = providers.length === 0 ? ['perplexity', 'openai', 'anthropic'] : providers
+      const toShow = providers.length === 0 ? ['perplexity', 'openai', 'anthropic', 'xai'] : providers
 
       const results = await Promise.all(
         toShow.map(async (provider) => ({
