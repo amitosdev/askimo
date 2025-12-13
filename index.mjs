@@ -71,16 +71,16 @@ program
       let responseText
 
       if (options.json) {
-        const { text, sources } = await generateResponse(model, conversation.messages)
+        const { text, sources, duration } = await generateResponse(model, conversation.messages)
         responseText = text
         conversation.messages.push({
           role: 'assistant',
           content: responseText
         })
         await saveConversation(conversation, existingPath)
-        outputJson(conversation, responseText, sources)
+        outputJson(conversation, responseText, sources, duration)
       } else {
-        responseText = await streamResponse(model, conversation.messages)
+        responseText = await streamResponse(model, conversation.messages, modelName)
         conversation.messages.push({
           role: 'assistant',
           content: responseText
