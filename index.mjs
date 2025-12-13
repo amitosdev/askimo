@@ -3,7 +3,8 @@
 import { Command } from 'commander'
 import { startChat } from './lib/chat.mjs'
 import { ensureDirectories, loadConfig } from './lib/config.mjs'
-import { createConversation, loadConversation, saveConversation } from './lib/conversation.mjs'
+import { createConversation, loadConversation, loadConversationById, saveConversation } from './lib/conversation.mjs'
+import { showConversationsInBrowser } from './lib/conversations-ui.mjs'
 import { buildMessage, readFile, readStdin } from './lib/input.mjs'
 import { DEFAULT_MODELS, determineProvider, getProvider, listModels } from './lib/providers.mjs'
 import { generateResponse, outputJson, streamResponse } from './lib/stream.mjs'
@@ -23,6 +24,7 @@ program
   .option('-x, --xai', 'Use xAI Grok')
   .option('-j, --json', 'Output as JSON instead of streaming')
   .option('-c, --continue <n>', 'Continue conversation N (1=last, 2=second-to-last)', Number.parseInt)
+  .option('--cid <id>', 'Continue conversation by ID')
   .option('-f, --file <path>', 'Read content from file')
   .action(async (question, options) => {
     try {
@@ -51,8 +53,21 @@ program
       let conversation
       let existingPath = null
 
+      if (options.continue && options.cid) {
+        console.error('Error: Cannot use both -c and --cid flags')
+        process.exit(1)
+      }
+
       if (options.continue) {
         const loaded = await loadConversation(options.continue)
+        conversation = loaded.conversation
+        existingPath = loaded.filePath
+
+        if (conversation.provider !== name) {
+          console.error(`Warning: Continuing ${conversation.provider} conversation with ${name}`)
+        }
+      } else if (options.cid) {
+        const loaded = await loadConversationById(options.cid)
         conversation = loaded.conversation
         existingPath = loaded.filePath
 
@@ -101,15 +116,21 @@ program
   .option('-a, --anthropic', 'Use Anthropic Claude')
   .option('-x, --xai', 'Use xAI Grok')
   .option('-c, --continue <n>', 'Continue conversation N (1=last, 2=second-to-last)', Number.parseInt)
+  .option('--cid <id>', 'Continue conversation by ID')
   .action(async (options) => {
     try {
+      if (options.continue && options.cid) {
+        console.error('Error: Cannot use both -c and --cid flags')
+        process.exit(1)
+      }
+
       const config = await loadConfig()
       await ensureDirectories()
 
       const providerName = determineProvider(options, config)
       const { model, name, modelName } = getProvider(providerName, config)
 
-      await startChat(model, name, modelName, options.continue)
+      await startChat(model, name, modelName, options.continue, options.cid)
     } catch (err) {
       console.error('Error:', err.message)
       process.exit(1)
@@ -157,6 +178,18 @@ program
         }
       }
       console.log('')
+    } catch (err) {
+      console.error('Error:', err.message)
+      process.exit(1)
+    }
+  })
+
+program
+  .command('conversations')
+  .description('View all conversations in browser')
+  .action(async () => {
+    try {
+      await showConversationsInBrowser()
     } catch (err) {
       console.error('Error:', err.message)
       process.exit(1)

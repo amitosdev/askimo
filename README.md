@@ -66,6 +66,7 @@ askimo "what's happening today?" -x      # Use xAI Grok
 ```bash
 askimo "tell me more" -c 1     # Continue last conversation
 askimo "go deeper" -c 2        # Continue second-to-last
+askimo "explain more" --cid abc123  # Continue by conversation ID
 ```
 
 ### JSON output
@@ -95,6 +96,7 @@ askimo chat                # Start new chat
 askimo chat -o             # Chat with OpenAI
 askimo chat -x             # Chat with xAI Grok
 askimo chat -c 1           # Continue last conversation
+askimo chat --cid abc123    # Continue by conversation ID
 ```
 
 Type `exit` or `Ctrl+C` to quit.
@@ -105,6 +107,12 @@ Type `exit` or `Ctrl+C` to quit.
 askimo models              # All providers
 askimo models -p           # Perplexity only
 askimo models -x           # xAI only
+```
+
+### View conversation history
+
+```bash
+askimo conversations       # Opens browser with all conversations
 ```
 
 ---

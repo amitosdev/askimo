@@ -42,6 +42,7 @@
     "@ai-sdk/xai": "^2.0.40",
     "@inquirer/input": "^5.0.2",
     "ai": "^5.0.106",
-    "commander": "^14.0.2"
+    "commander": "^14.0.2",
+    "hcat": "^2.2.1"
   }
 }
