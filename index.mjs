@@ -22,6 +22,7 @@ program
   .option('-o, --openai', 'Use OpenAI')
   .option('-a, --anthropic', 'Use Anthropic Claude')
   .option('-x, --xai', 'Use xAI Grok')
+  .option('-g, --gemini', 'Use Google Gemini')
   .option('-j, --json', 'Output as JSON instead of streaming')
   .option('-c, --continue <n>', 'Continue conversation N (1=last, 2=second-to-last)', Number.parseInt)
   .option('--cid <id>', 'Continue conversation by ID')
@@ -115,6 +116,7 @@ program
   .option('-o, --openai', 'Use OpenAI')
   .option('-a, --anthropic', 'Use Anthropic Claude')
   .option('-x, --xai', 'Use xAI Grok')
+  .option('-g, --gemini', 'Use Google Gemini')
   .option('-c, --continue <n>', 'Continue conversation N (1=last, 2=second-to-last)', Number.parseInt)
   .option('--cid <id>', 'Continue conversation by ID')
   .action(async (options) => {
@@ -144,6 +146,7 @@ program
   .option('-o, --openai', 'Show only OpenAI models')
   .option('-a, --anthropic', 'Show only Anthropic models')
   .option('-x, --xai', 'Show only xAI models')
+  .option('-g, --gemini', 'Show only Gemini models')
   .action(async (options) => {
     try {
       const config = await loadConfig()
@@ -153,8 +156,9 @@ program
       if (options.openai) providers.push('openai')
       if (options.anthropic) providers.push('anthropic')
       if (options.xai) providers.push('xai')
+      if (options.gemini) providers.push('gemini')
 
-      const toShow = providers.length === 0 ? ['perplexity', 'openai', 'anthropic', 'xai'] : providers
+      const toShow = providers.length === 0 ? ['perplexity', 'openai', 'anthropic', 'xai', 'gemini'] : providers
 
       const results = await Promise.all(
         toShow.map(async (provider) => ({

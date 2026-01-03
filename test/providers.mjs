@@ -19,6 +19,11 @@ test('determineProvider returns anthropic when --anthropic flag is set', (t) => 
   t.is(result, 'anthropic')
 })
 
+test('determineProvider returns gemini when --gemini flag is set', (t) => {
+  const result = determineProvider({ gemini: true })
+  t.is(result, 'gemini')
+})
+
 test('determineProvider prefers flag over config', (t) => {
   const result = determineProvider({ openai: true }, { DEFAULT_PROVIDER: 'anthropic' })
   t.is(result, 'openai')
@@ -56,4 +61,8 @@ test('DEFAULT_MODELS contains openai model', (t) => {
 
 test('DEFAULT_MODELS contains anthropic model', (t) => {
   t.is(DEFAULT_MODELS.anthropic, 'claude-sonnet-4-20250514')
+})
+
+test('DEFAULT_MODELS contains gemini model', (t) => {
+  t.is(DEFAULT_MODELS.gemini, 'gemini-3-pro-preview')
 })

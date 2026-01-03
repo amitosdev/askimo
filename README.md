@@ -7,7 +7,7 @@
 
 A CLI tool for communicating with AI providers.
 
-**Supported providers:** Perplexity · OpenAI · Anthropic · xAI (Grok)
+**Supported providers:** Perplexity · OpenAI · Anthropic · xAI (Grok) · Google Gemini
 
 ---
 
@@ -27,6 +27,7 @@ PERPLEXITY_API_KEY=your-perplexity-key
 OPENAI_API_KEY=your-openai-key
 ANTHROPIC_API_KEY=your-anthropic-key
 XAI_API_KEY=your-xai-key
+GOOGLE_GENERATIVE_AI_API_KEY=your-google-key
 
 # Optional settings
 DEFAULT_PROVIDER=perplexity
@@ -34,6 +35,7 @@ PERPLEXITY_MODEL=sonar
 OPENAI_MODEL=gpt-4o
 ANTHROPIC_MODEL=claude-sonnet-4-20250514
 XAI_MODEL=grok-4
+GEMINI_MODEL=gemini-3-pro-preview
 ```
 
 ---
@@ -54,11 +56,13 @@ askimo "What is the capital of France?"
 | `-o` | OpenAI               |
 | `-a` | Anthropic            |
 | `-x` | xAI (Grok)           |
+| `-g` | Google Gemini        |
 
 ```bash
 askimo "explain quantum computing" -o    # Use OpenAI
 askimo "write a haiku" -a                # Use Anthropic
 askimo "what's happening today?" -x      # Use xAI Grok
+askimo "summarize this topic" -g         # Use Google Gemini
 ```
 
 ### Continue a conversation
@@ -94,9 +98,9 @@ askimo -f error.log "find the bug"
 ```bash
 askimo chat                # Start new chat
 askimo chat -o             # Chat with OpenAI
-askimo chat -x             # Chat with xAI Grok
+askimo chat -g             # Chat with Gemini
 askimo chat -c 1           # Continue last conversation
-askimo chat --cid abc123    # Continue by conversation ID
+askimo chat --cid abc123   # Continue by conversation ID
 ```
 
 Type `exit` or `Ctrl+C` to quit.
@@ -106,7 +110,7 @@ Type `exit` or `Ctrl+C` to quit.
 ```bash
 askimo models              # All providers
 askimo models -p           # Perplexity only
-askimo models -x           # xAI only
+askimo models -g           # Gemini only
 ```
 
 ### View conversation history
