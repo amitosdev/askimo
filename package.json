@@ -32,17 +32,17 @@
   "repository": "https://github.com/amitosdev/askimo.git",
   "homepage": "https://github.com/amitosdev/askimo#readme",
   "devDependencies": {
-    "@biomejs/biome": "^2.3.14",
+    "@biomejs/biome": "^2.4.4",
     "ava": "^6.4.1"
   },
   "dependencies": {
-    "@ai-sdk/anthropic": "^3.0.35",
-    "@ai-sdk/google": "^3.0.20",
-    "@ai-sdk/openai": "^3.0.25",
-    "@ai-sdk/perplexity": "^3.0.17",
-    "@ai-sdk/xai": "^3.0.46",
-    "@inquirer/input": "^5.0.4",
-    "ai": "^6.0.69",
+    "@ai-sdk/anthropic": "^3.0.46",
+    "@ai-sdk/google": "^3.0.30",
+    "@ai-sdk/openai": "^3.0.30",
+    "@ai-sdk/perplexity": "^3.0.19",
+    "@ai-sdk/xai": "^3.0.57",
+    "@inquirer/input": "^5.0.7",
+    "ai": "^6.0.97",
     "commander": "^14.0.3",
     "hcat": "^2.2.1"
   }
