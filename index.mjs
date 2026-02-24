@@ -7,7 +7,7 @@ import { createConversation, loadConversation, loadConversationById, saveConvers
 import { showConversationsInBrowser } from './lib/conversationsUi.mjs'
 import { buildMessage, readFile, readStdin } from './lib/input.mjs'
 import { DEFAULT_MODELS, determineProvider, getProvider, listModels } from './lib/providers.mjs'
-import { generateResponse, outputJson, streamResponse } from './lib/stream.mjs'
+import { generateResponse, outputJson, printResponse, streamResponse } from './lib/stream.mjs'
 import pkg from './package.json' with { type: 'json' }
 
 const program = new Command()
@@ -24,6 +24,7 @@ program
   .option('-x, --xai', 'Use xAI Grok')
   .option('-g, --gemini', 'Use Google Gemini')
   .option('-j, --json', 'Output as JSON instead of streaming')
+  .option('-n, --no-stream', 'Disable streaming (print full response at once)')
   .option('-c, --continue <n>', 'Continue conversation N (1=last, 2=second-to-last)', Number.parseInt)
   .option('--cid <id>', 'Continue conversation by ID')
   .option('-f, --file <path>', 'Read content from file')
@@ -95,6 +96,15 @@ program
         })
         await saveConversation(conversation, existingPath)
         outputJson(conversation, responseText, sources, duration)
+      } else if (!options.stream) {
+        const { text, sources, duration } = await generateResponse(model, conversation.messages)
+        responseText = text
+        conversation.messages.push({
+          role: 'assistant',
+          content: responseText
+        })
+        await saveConversation(conversation, existingPath)
+        printResponse(responseText, sources, duration, modelName)
       } else {
         responseText = await streamResponse(model, conversation.messages, modelName)
         conversation.messages.push({
