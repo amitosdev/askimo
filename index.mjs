@@ -5,9 +5,17 @@ import { startChat } from './lib/chat.mjs'
 import { ensureDirectories, loadConfig } from './lib/config.mjs'
 import { createConversation, loadConversation, loadConversationById, saveConversation } from './lib/conversation.mjs'
 import { showConversationsInBrowser } from './lib/conversationsUi.mjs'
+import { saveImages } from './lib/image.mjs'
 import { buildMessage, readFile, readStdin } from './lib/input.mjs'
-import { DEFAULT_MODELS, determineProvider, getProvider, listModels } from './lib/providers.mjs'
-import { generateResponse, outputJson, printResponse, streamResponse } from './lib/stream.mjs'
+import { DEFAULT_MODELS, determineProvider, getImageProvider, getProvider, listModels } from './lib/providers.mjs'
+import {
+  generateImageResponse,
+  generateResponse,
+  outputJson,
+  printImageResponse,
+  printResponse,
+  streamResponse
+} from './lib/stream.mjs'
 import pkg from './package.json' with { type: 'json' }
 
 const program = new Command()
@@ -28,6 +36,8 @@ program
   .option('-c, --continue <n>', 'Continue conversation N (1=last, 2=second-to-last)', Number.parseInt)
   .option('--cid <id>', 'Continue conversation by ID')
   .option('-f, --file <path>', 'Read content from file')
+  .option('-i, --image', 'Generate an image (uses Gemini)')
+  .option('-d, --output-dir <path>', 'Directory to save generated images (default: current directory)')
   .action(async (question, options) => {
     try {
       const stdinContent = await readStdin()
@@ -49,8 +59,19 @@ program
       const config = await loadConfig()
       await ensureDirectories()
 
-      const providerName = determineProvider(options, config)
-      const { model, name, modelName } = getProvider(providerName, config)
+      let model
+      let name
+      let modelName
+
+      if (options.image) {
+        if (options.perplexity || options.openai || options.anthropic || options.xai) {
+          console.error('Note: --image uses Gemini regardless of other provider flags')
+        }
+        ;({ model, name, modelName } = getImageProvider(config))
+      } else {
+        const providerName = determineProvider(options, config)
+        ;({ model, name, modelName } = getProvider(providerName, config))
+      }
 
       let conversation
       let existingPath = null
@@ -87,7 +108,23 @@ program
 
       let responseText
 
-      if (options.json) {
+      if (options.image) {
+        const { text, files, duration } = await generateImageResponse(model, conversation.messages)
+        const imagePaths = await saveImages(files, options.outputDir)
+        responseText = text || ''
+        conversation.messages.push({
+          role: 'assistant',
+          content: responseText,
+          images: imagePaths
+        })
+        await saveConversation(conversation, existingPath)
+
+        if (options.json) {
+          outputJson(conversation, responseText, undefined, duration, imagePaths)
+        } else {
+          printImageResponse(responseText, imagePaths, duration, modelName)
+        }
+      } else if (options.json) {
         const { text, sources, duration } = await generateResponse(model, conversation.messages)
         responseText = text
         conversation.messages.push({

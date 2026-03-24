@@ -36,6 +36,7 @@ OPENAI_MODEL=gpt-4o
 ANTHROPIC_MODEL=claude-sonnet-4-20250514
 XAI_MODEL=grok-4
 GEMINI_MODEL=gemini-3-pro-preview
+IMAGE_MODEL=gemini-3-pro-image-preview
 ```
 
 ---
@@ -64,6 +65,16 @@ askimo "write a haiku" -a                # Use Anthropic
 askimo "what's happening today?" -x      # Use xAI Grok
 askimo "summarize this topic" -g         # Use Google Gemini
 ```
+
+### Generate an image
+
+```bash
+askimo --image "a cat wearing a top hat"          # Save to current directory
+askimo --image -d ./images "a sunset over ocean"  # Save to ./images/
+askimo --image --json "a dog on a skateboard"     # JSON output with image paths
+```
+
+Uses Google Gemini's image generation model. Requires `GOOGLE_GENERATIVE_AI_API_KEY` in your config.
 
 ### Continue a conversation
 
@@ -123,14 +134,15 @@ askimo conversations       # Opens browser with all conversations
 
 ## ✨ Features
 
-| Feature        | Description                                       |
-|----------------|---------------------------------------------------|
-| Streaming      | Real-time response output                         |
-| Piping         | Pipe content via stdin                            |
-| File input     | Read content from files with `-f`                 |
-| Citations      | Source links with Perplexity                      |
-| History        | Conversations saved to `~/.askimo/conversations/` |
-| Multi-provider | Switch between AI providers easily                |
+| Feature          | Description                                       |
+|------------------|---------------------------------------------------|
+| Streaming        | Real-time response output                         |
+| Image generation | Generate images with `-i` (uses Gemini)           |
+| Piping           | Pipe content via stdin                            |
+| File input       | Read content from files with `-f`                 |
+| Citations        | Source links with Perplexity                      |
+| History          | Conversations saved to `~/.askimo/conversations/` |
+| Multi-provider   | Switch between AI providers easily                |
 
 ---
 

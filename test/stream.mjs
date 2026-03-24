@@ -101,3 +101,22 @@ test('buildJsonOutput excludes sources when null', (t) => {
   const output = buildJsonOutput(conversation, 'response', null)
   t.false('sources' in output)
 })
+
+test('buildJsonOutput includes images when provided', (t) => {
+  const conversation = createMockConversation()
+  const images = ['/tmp/askimo-1.png', '/tmp/askimo-2.png']
+  const output = buildJsonOutput(conversation, 'response', undefined, undefined, images)
+  t.deepEqual(output.images, images)
+})
+
+test('buildJsonOutput excludes images when empty array', (t) => {
+  const conversation = createMockConversation()
+  const output = buildJsonOutput(conversation, 'response', undefined, undefined, [])
+  t.false('images' in output)
+})
+
+test('buildJsonOutput excludes images when undefined', (t) => {
+  const conversation = createMockConversation()
+  const output = buildJsonOutput(conversation, 'response', undefined, undefined, undefined)
+  t.false('images' in output)
+})
