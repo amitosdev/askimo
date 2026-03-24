@@ -17,8 +17,8 @@ test('saveImages writes files and returns paths', async (t) => {
   const absDir = path.join(process.cwd(), `test-saveImages-${Date.now()}`)
 
   const files = [
-    { mediaType: 'image/png', data: Buffer.from('fake-png') },
-    { mediaType: 'image/jpeg', data: Buffer.from('fake-jpg') }
+    { mediaType: 'image/png', uint8Array: Buffer.from('fake-png') },
+    { mediaType: 'image/jpeg', uint8Array: Buffer.from('fake-jpg') }
   ]
 
   const paths = await saveImages(files, absDir)
