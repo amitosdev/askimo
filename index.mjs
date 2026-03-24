@@ -6,7 +6,7 @@ import { ensureDirectories, loadConfig } from './lib/config.mjs'
 import { createConversation, loadConversation, loadConversationById, saveConversation } from './lib/conversation.mjs'
 import { showConversationsInBrowser } from './lib/conversationsUi.mjs'
 import { saveImages } from './lib/image.mjs'
-import { buildMessage, readFile, readStdin } from './lib/input.mjs'
+import { buildContentParts, buildMessage, isImageFile, readFile, readImageFile, readStdin } from './lib/input.mjs'
 import { DEFAULT_MODELS, determineProvider, getImageProvider, getProvider, listModels } from './lib/providers.mjs'
 import {
   generateImageResponse,
@@ -41,15 +41,26 @@ program
   .action(async (question, options) => {
     try {
       const stdinContent = await readStdin()
-      const fileContent = options.file ? await readFile(options.file) : null
+      const isFileImage = options.file && isImageFile(options.file)
+      const fileContent = options.file && !isFileImage ? await readFile(options.file) : null
 
       if (stdinContent && options.file) {
         console.error('Error: Cannot use both piped input and --file flag')
         process.exit(1)
       }
 
-      const content = stdinContent || fileContent
-      const message = buildMessage(question, content)
+      let message
+      let modelContent
+
+      if (isFileImage) {
+        const imageData = await readImageFile(options.file)
+        message = question || 'Describe this image'
+        modelContent = buildContentParts(question, imageData)
+      } else {
+        const content = stdinContent || fileContent
+        message = buildMessage(question, content)
+        modelContent = message
+      }
 
       if (!message) {
         console.error('Error: No question provided. Use: askimo "question" or pipe content')
@@ -106,10 +117,14 @@ program
         content: message
       })
 
+      const modelMessages = isFileImage
+        ? [...conversation.messages.slice(0, -1), { role: 'user', content: modelContent }]
+        : conversation.messages
+
       let responseText
 
       if (options.image) {
-        const { text, files, duration } = await generateImageResponse(model, conversation.messages)
+        const { text, files, duration } = await generateImageResponse(model, modelMessages)
         const imagePaths = await saveImages(files, options.outputDir)
         responseText = text || ''
         conversation.messages.push({
@@ -125,7 +140,7 @@ program
           printImageResponse(responseText, imagePaths, duration, modelName)
         }
       } else if (options.json) {
-        const { text, sources, duration } = await generateResponse(model, conversation.messages)
+        const { text, sources, duration } = await generateResponse(model, modelMessages)
         responseText = text
         conversation.messages.push({
           role: 'assistant',
@@ -134,7 +149,7 @@ program
         await saveConversation(conversation, existingPath)
         outputJson(conversation, responseText, sources, duration)
       } else if (!options.stream) {
-        const { text, sources, duration } = await generateResponse(model, conversation.messages)
+        const { text, sources, duration } = await generateResponse(model, modelMessages)
         responseText = text
         conversation.messages.push({
           role: 'assistant',
@@ -143,7 +158,7 @@ program
         await saveConversation(conversation, existingPath)
         printResponse(responseText, sources, duration, modelName)
       } else {
-        responseText = await streamResponse(model, conversation.messages, modelName)
+        responseText = await streamResponse(model, modelMessages, modelName)
         conversation.messages.push({
           role: 'assistant',
           content: responseText

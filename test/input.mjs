@@ -1,5 +1,5 @@
 import test from 'ava'
-import { buildMessage } from '../lib/input.mjs'
+import { buildContentParts, buildMessage, isImageFile } from '../lib/input.mjs'
 
 test('buildMessage combines prompt and content with colon format', (t) => {
   const result = buildMessage('explain this', 'const x = 1')
@@ -50,4 +50,58 @@ test('buildMessage preserves multiline content', (t) => {
   const content = 'line 1\nline 2\nline 3'
   const result = buildMessage('summarize', content)
   t.is(result, 'summarize:\n\nline 1\nline 2\nline 3')
+})
+
+// isImageFile tests
+
+test('isImageFile returns true for .png', (t) => {
+  t.true(isImageFile('photo.png'))
+})
+
+test('isImageFile returns true for .jpg', (t) => {
+  t.true(isImageFile('photo.jpg'))
+})
+
+test('isImageFile returns true for .jpeg', (t) => {
+  t.true(isImageFile('photo.jpeg'))
+})
+
+test('isImageFile returns true for .gif', (t) => {
+  t.true(isImageFile('photo.gif'))
+})
+
+test('isImageFile returns true for .webp', (t) => {
+  t.true(isImageFile('photo.webp'))
+})
+
+test('isImageFile returns false for .txt', (t) => {
+  t.false(isImageFile('file.txt'))
+})
+
+test('isImageFile returns false for .js', (t) => {
+  t.false(isImageFile('code.js'))
+})
+
+test('isImageFile is case-insensitive', (t) => {
+  t.true(isImageFile('photo.PNG'))
+  t.true(isImageFile('photo.JPG'))
+})
+
+// buildContentParts tests
+
+test('buildContentParts returns array with image and text parts', (t) => {
+  const imageData = { data: Buffer.from('fake'), mediaType: 'image/png' }
+  const result = buildContentParts('describe this', imageData)
+  t.is(result.length, 2)
+  t.is(result[0].type, 'image')
+  t.deepEqual(result[0].image, imageData.data)
+  t.is(result[0].mimeType, 'image/png')
+  t.is(result[1].type, 'text')
+  t.is(result[1].text, 'describe this')
+})
+
+test('buildContentParts uses default text when no prompt', (t) => {
+  const imageData = { data: Buffer.from('fake'), mediaType: 'image/jpeg' }
+  const result = buildContentParts(undefined, imageData)
+  t.is(result[1].text, 'Describe this image')
 })

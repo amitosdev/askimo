@@ -102,6 +102,8 @@ echo "hello world" | askimo "translate to French"
 ```bash
 askimo -f code.js "what does this do"
 askimo -f error.log "find the bug"
+askimo -f photo.jpg "what's in this image?"         # Image files auto-detected
+askimo --image "add watercolor effect" -f photo.png  # Image editing with Gemini
 ```
 
 ### Interactive chat
